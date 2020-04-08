@@ -19,69 +19,76 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/users", (req, res) => {
-  const users = db.getUsers();
-  if (users) {
-    return res.status(200).json(users);
-  } else {
-    return res.status(404).send({
-      message: "Not Found"
+// include all the methods that use the same endpoints
+
+// Endpoint = "/users"
+app
+  .route("/users")
+  .get("/users", (req, res) => {
+    const users = db.getUsers();
+    if (users) {
+      return res.status(200).json(users);
+    } else {
+      return res.status(404).send({
+        message: "Not Found"
+      });
+    }
+  })
+  .post("/users", (req, res) => {
+    let name = req.body.name || "Yasir";
+    const newUser = db.createUser({
+      name: name
     });
-  }
-});
+    if (!name) {
+      return res.status(404).send({
+        message: "Not Found"
+      });
+    }
 
-app.get("/users/:id", (req, res) => {
-  const user = db.getUserById(req.params.id);
-
-  if (!user) {
-    return res.status(404).send({
-      message: "Not Found"
-    });
-  }
-
-  return res.json(user);
-});
-
-app.post("/users", (req, res) => {
-  let name = req.body.name || "Yasir";
-  const newUser = db.createUser({
-    name: name
+    res.json(newUser);
   });
-  if (!name) {
-    return res.status(404).send({
-      message: "Not Found"
-    });
-  }
 
-  res.json(newUser);
-});
+// include all the methods that use the same endpoints
+// Endpoint = "/users/:id"
 
-app.put("/users/:id", (req, res) => {
-  let userID = req.params.id;
-  if (!userID) {
-    return res.status(404).send({
-      message: "Not Found"
-    });
-  } else {
-    let updateUser = db.updateUser(userID, {
-      name: req.body.name
-    });
-    return res.json(updateUser);
-  }
-});
+app
+  .route("/users/:id")
+  .get("/users/:id", (req, res) => {
+    const user = db.getUserById(req.params.id);
 
-app.delete("/users/:id", (req, res) => {
-  let userID = req.params.id;
-  let user = db.getUserById(userID);
-  if (!user) {
-    return res.status(404).send({
-      message: "Not Found"
-    });
-  } else {
-    let deletedUser = db.deleteUser(userID);
-    res.status(204).json(deletedUser);
-  }
-});
+    if (!user) {
+      return res.status(404).send({
+        message: "Not Found"
+      });
+    }
+
+    return res.json(user);
+  })
+  .put("/users/:id", (req, res) => {
+    let userID = req.params.id;
+    if (!userID) {
+      return res.status(404).send({
+        message: "Not Found"
+      });
+    } else {
+      let updateUser = db.updateUser(userID, {
+        name: req.body.name
+      });
+      return res.json(updateUser);
+    }
+  })
+  .delete("/users/:id", (req, res) => {
+    let userID = req.params.id;
+    let user = db.getUserById(userID);
+    if (!user) {
+      return res.status(404).send({
+        message: "Not Found"
+      });
+    } else {
+      let deletedUser = db.deleteUser(userID);
+      res.status(204).json(deletedUser);
+    }
+  });
 
 app.listen(8000, () => {
   console.log("Listening at http://localhost:8080");
