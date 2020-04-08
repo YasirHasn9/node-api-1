@@ -70,6 +70,19 @@ app.put("/users/:id", (req, res) => {
   }
 });
 
+app.delete("/users/:id", (req, res) => {
+  let userID = req.params.id;
+  let user = db.getUserById(userID);
+  if (!user) {
+    return res.status(404).send({
+      message: "Not Found"
+    });
+  } else {
+    let deletedUser = db.deleteUser(userID);
+    res.status(204).json(deletedUser);
+  }
+});
+
 app.listen(8000, () => {
   console.log("Listening at http://localhost:8080");
 });
