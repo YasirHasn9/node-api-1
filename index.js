@@ -41,6 +41,35 @@ app.get("/users/:id", (req, res) => {
 
   return res.json(user);
 });
+
+app.post("/users", (req, res) => {
+  let name = req.body.name || "Yasir";
+  const newUser = db.createUser({
+    name: name
+  });
+  if (!name) {
+    return res.status(404).send({
+      message: "Not Found"
+    });
+  }
+
+  res.json(newUser);
+});
+
+app.put("/users/:id", (req, res) => {
+  let userID = req.params.id;
+  if (!userID) {
+    return res.status(404).send({
+      message: "Not Found"
+    });
+  } else {
+    let updateUser = db.updateUser(userID, {
+      name: req.body.name
+    });
+    return res.json(updateUser);
+  }
+});
+
 app.listen(8000, () => {
   console.log("Listening at http://localhost:8080");
 });
