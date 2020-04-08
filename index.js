@@ -29,6 +29,18 @@ app.get("/users", (req, res) => {
     });
   }
 });
-app.listen(8080, () => {
+
+app.get("/users/:id", (req, res) => {
+  const user = db.getUserById(req.params.id);
+
+  if (!user) {
+    return res.status(404).send({
+      message: "Not Found"
+    });
+  }
+
+  return res.json(user);
+});
+app.listen(8000, () => {
   console.log("Listening at http://localhost:8080");
 });
